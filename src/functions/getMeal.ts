@@ -27,9 +27,10 @@ const getMealDetails = async (id: number): Promise<Meals> => {
 
 export const getMeals = async (ingredient: string): Promise<Array<Meals>> => { 
     const { data } = await mealsDb.get(`json/v1/1/filter.php?i=${ingredient}`);
+    if (!data?.meals) return Promise.resolve([]);
     const response = [];
-    for (const meal of data.meals) {
-        response.push(await getMealDetails(meal.idMeal));
+    for (const meal of data?.meals) {
+        response.push(await getMealDetails(meal?.idMeal));
     }
     return response;
 } 
