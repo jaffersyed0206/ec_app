@@ -10,9 +10,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getMeals = void 0;
+const Meals_1 = require("../models/Meals");
 const axios_1 = require("../network/axios");
+const getMealDetails = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const { data } = yield axios_1.mealsDb.get(`json/v1/1/lookup.php?i=${id}`);
+    const ingredients = [];
+    for (let i = 1; i <= 20; i++) {
+        const currentIngredient = new Meals_1.Ingredients(data === null || data === void 0 ? void 0 : data.meals[0][`strIngredient${i}`], data === null || data === void 0 ? void 0 : data.meals[0][`strMeasure${i}`]);
+        ingredients.push(currentIngredient);
+    }
+    const meal = data === null || data === void 0 ? void 0 : data.meals[0];
+    return new Meals_1.Meals(meal.idMeal, meal.strMeal, meal.strInstructions, (_a = meal.strTags) === null || _a === void 0 ? void 0 : _a.split(','), meal.strMealThumb, meal.strYoutube, ingredients);
+});
 const getMeals = (ingredient) => __awaiter(void 0, void 0, void 0, function* () {
     const { data } = yield axios_1.mealsDb.get(`json/v1/1/filter.php?i=${ingredient}`);
-    return data;
+    const response = [];
+    for (const meal of data.meals) {
+        response.push(yield getMealDetails(meal.idMeal));
+    }
+    return response;
 });
 exports.getMeals = getMeals;

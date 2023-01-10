@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getMeals } from '../functions/getMeal';
+import { Meals } from '../models/Meals';
 import { verifyToken } from '../tokens/functions';
 
 const mealsRouter = Router();
@@ -20,7 +21,7 @@ mealsRouter.use(async(req, res, next) => {
 
 mealsRouter.get('/:ingredient', async (req, res) => {
     const { ingredient } = req.params;
-    const meals = await getMeals(ingredient);
+    const meals: Array<Meals> = await getMeals(ingredient);
     res.send(meals);
 });
 
